@@ -101,4 +101,12 @@ dependencies {
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
     implementation ("com.google.accompanist:accompanist-placeholder-material:0.23.1")
+
+    // Room for offline storage
+    implementation("androidx.room:room-runtime:2.6.1")
+    kapt("androidx.room:room-compiler:2.6.1")
+//    // Room KTX extension for coroutine support
+    implementation("androidx.room:room-ktx:2.6.1") // Add this line
+
+    implementation ("com.google.code.gson:gson:2.10.1")
 }

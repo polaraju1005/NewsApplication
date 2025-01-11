@@ -15,6 +15,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.newsapp.data.model.Article
 import com.newsapp.ui.screens.NewsListScreen
 import com.newsapp.ui.screens.WebViewScreen
@@ -32,16 +33,21 @@ class MainActivity : ComponentActivity() {
                 // Navigation controller
                 val navController = rememberNavController()
 
-                // Navigation host to manage multiple screens
-                NavHost(navController = navController, startDestination = "news_list") {
+                NavHost(
+                    navController = navController,
+                    startDestination = "news_list"
+                ) {
                     composable("news_list") {
                         NewsListScreenContent(navController)
                     }
-                    composable("webview_screen/{url}") { backStackEntry ->
-                        val url = backStackEntry.arguments?.getString("url")
-                        WebViewScreen(url ?: "")
+                    composable(
+                        route = "webview_screen?article={article}",
+                        arguments = listOf(navArgument("article") { nullable = true })
+                    ) { backStackEntry ->
+                        WebViewScreen(backStackEntry)
                     }
                 }
+
             }
         }
     }
@@ -49,27 +55,24 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun NewsListScreenContent(navController: NavController) {
-    val viewModel: NewsViewModel = hiltViewModel() // Ensure this fetches updated data
-    val articles = viewModel.articles.collectAsState(initial = emptyList()) // Collect articles data
-
+    val viewModel: NewsViewModel = hiltViewModel()
+    val articles = viewModel.articles.collectAsState(initial = emptyList())
     val context = LocalContext.current
 
     NewsListScreen(
         articles = articles.value,
         isLoading = viewModel.isLoading,
         onArticleClick = { article ->
-            // URL encoding for safe navigation
-            val url = Uri.encode(article.url)  // Ensure correct encoding for navigation
-            navController.navigate("webview_screen/$url")
+            val articleJson =
+                Uri.encode(viewModel.convertArticleToJson(article)) // Convert article to JSON for passing
+            navController.navigate("webview_screen?article=$articleJson")
         },
-        onShareClick = { article ->
-            shareArticle(article, context)
-        }
+        onShareClick = { article -> shareArticle(article, context) }
     ) { category, country ->
-        // Pass the required parameters for fetching news based on category and country
         fetchCategoryNews(viewModel, category, country)
     }
 }
+
 
 fun shareArticle(article: Article, context: Context) {
     val url = article.url
@@ -94,7 +97,6 @@ private fun showToast(message: String, context: Context) {
 }
 
 private fun fetchCategoryNews(viewModel: NewsViewModel, category: String, country: String) {
-    // Calling the ViewModel function to fetch news data by category
     viewModel.fetchNews(
         category = category,
         language = viewModel.selectedLanguage,

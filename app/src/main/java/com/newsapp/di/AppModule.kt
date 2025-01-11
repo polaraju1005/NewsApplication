@@ -1,11 +1,16 @@
 package com.newsapp.di
 
+import android.content.Context
+import androidx.room.Room
 import com.newsapp.data.api.NewsApiService
 import com.newsapp.data.repository.NewsRepositoryImpl
+import com.newsapp.data.room.AppDatabase
+import com.newsapp.data.room.ArticleDao
 import com.newsapp.domain.repository.NewsRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -29,4 +34,5 @@ object AppModule {
     fun provideNewsRepository(apiService: NewsApiService): NewsRepository {
         return NewsRepositoryImpl(apiService)
     }
+
 }

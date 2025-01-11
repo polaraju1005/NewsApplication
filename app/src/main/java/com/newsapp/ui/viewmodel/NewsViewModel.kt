@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.Gson
 import com.newsapp.data.model.Article
 import com.newsapp.domain.repository.NewsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -34,5 +35,10 @@ class NewsViewModel @Inject constructor(private val repository: NewsRepository) 
             }
         }
     }
+
+    fun convertArticleToJson(article: Article): String {
+        return Gson().toJson(article)
+    }
+
 }
 
