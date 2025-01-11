@@ -67,7 +67,10 @@ fun NewsListScreenContent(navController: NavController) {
                 Uri.encode(viewModel.convertArticleToJson(article)) // Convert article to JSON for passing
             navController.navigate("webview_screen?article=$articleJson")
         },
-        onShareClick = { article -> shareArticle(article, context) }
+        onShareClick = { article ->
+            shareArticle(article, context)
+        },
+        viewModel = viewModel
     ) { category, country ->
         fetchCategoryNews(viewModel, category, country)
     }

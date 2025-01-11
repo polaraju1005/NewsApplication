@@ -1,5 +1,6 @@
 package com.newsapp.ui.viewmodel
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -7,6 +8,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.newsapp.data.model.Article
+import com.newsapp.data.model.ArticleEntity
+import com.newsapp.data.repository.ArticleRepository
 import com.newsapp.domain.repository.NewsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,9 +18,14 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class NewsViewModel @Inject constructor(private val repository: NewsRepository) : ViewModel() {
+class NewsViewModel @Inject constructor(
+    private val repository: NewsRepository,
+    private val articleRepository: ArticleRepository
+) : ViewModel() {
     private val _articles = MutableStateFlow<List<Article>>(emptyList())
     val articles: StateFlow<List<Article>> = _articles
+
+    val savedArticles = mutableStateOf<List<ArticleEntity>>(emptyList())
 
     var selectedLanguage by mutableStateOf("en")
     var isLoading by mutableStateOf(false)
@@ -38,6 +46,23 @@ class NewsViewModel @Inject constructor(private val repository: NewsRepository) 
 
     fun convertArticleToJson(article: Article): String {
         return Gson().toJson(article)
+    }
+
+    fun fetchSavedArticles() {
+        viewModelScope.launch {
+            savedArticles.value = articleRepository.getAllArticles()
+        }
+    }
+
+    fun deleteArticle(url: String) {
+        viewModelScope.launch {
+            try {
+                articleRepository.deleteArticleByUrl(url)
+                fetchSavedArticles()
+            } catch (exception: Exception) {
+                Log.e("Error Deleting Article", "${exception.message}")
+            }
+        }
     }
 
 }
