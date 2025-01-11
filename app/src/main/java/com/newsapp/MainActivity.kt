@@ -30,7 +30,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             NewsAppTheme {
-                // Navigation controller
                 val navController = rememberNavController()
 
                 NavHost(
@@ -64,7 +63,7 @@ fun NewsListScreenContent(navController: NavController) {
         isLoading = viewModel.isLoading,
         onArticleClick = { article ->
             val articleJson =
-                Uri.encode(viewModel.convertArticleToJson(article)) // Convert article to JSON for passing
+                Uri.encode(viewModel.convertArticleToJson(article))
             navController.navigate("webview_screen?article=$articleJson")
         },
         onShareClick = { article ->

@@ -37,7 +37,7 @@ class NewsViewModel @Inject constructor(
                 val response = repository.getTopHeadlines(category, language, country, apiKey)
                 _articles.value = response.articles
             } catch (e: Exception) {
-                // Handle error
+                Log.e("FETCH_NEWS","Error occurred in fetching the data.")
             } finally {
                 isLoading = false
             }

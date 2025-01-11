@@ -10,14 +10,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WebViewViewModel @Inject constructor(private val repository: ArticleRepository) : ViewModel() {
-    // Save article to the database
     fun saveArticle(article: ArticleEntity) {
         viewModelScope.launch {
             repository.saveArticle(article)
         }
     }
 
-    // Check if an article exists in the database
     suspend fun isArticleExists(url: String): Boolean {
         return repository.isArticleExists(url)
     }

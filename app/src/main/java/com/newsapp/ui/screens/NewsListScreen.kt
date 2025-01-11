@@ -116,13 +116,28 @@ fun NewsListScreen(
                 }
             } else {
                 if (selectedItem == 0) {
-                    articles.forEach { article ->
-                        ArticleCard(
-                            article,
-                            onArticleClick,
-                            onShareClick,
-                            showDeleteIcon = false,
-                            onDeleteClick = {})
+                    if (articles.isEmpty()) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize(),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Text(
+                                text = "No Internet Connection.",
+                                style = MaterialTheme.typography.bodyMedium.copy(fontSize = 14.sp),
+                                color = Color.Gray,
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                    } else {
+                        articles.forEach { article ->
+                            ArticleCard(
+                                article,
+                                onArticleClick,
+                                onShareClick,
+                                showDeleteIcon = false,
+                                onDeleteClick = {})
+                        }
                     }
                 } else {
                     if (savedArticles.isEmpty()) {
@@ -176,8 +191,8 @@ fun ArticleCard(
     article: Article,
     onArticleClick: (Article) -> Unit,
     onShareClick: (Article) -> Unit,
-    showDeleteIcon: Boolean = false,  // Add this parameter
-    onDeleteClick: (Article) -> Unit // Add this callback
+    showDeleteIcon: Boolean = false,
+    onDeleteClick: (Article) -> Unit
 ) {
     Card(
         modifier = Modifier
@@ -188,7 +203,7 @@ fun ArticleCard(
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
-        Box(modifier = Modifier.fillMaxWidth()) {  // Box to overlay the delete icon
+        Box(modifier = Modifier.fillMaxWidth()) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -235,7 +250,7 @@ fun ArticleCard(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        // Share Icon
+
                         IconButton(
                             onClick = { onShareClick(article) }, modifier = Modifier.padding(4.dp)
                         ) {
@@ -245,7 +260,7 @@ fun ArticleCard(
                                 tint = MaterialTheme.colorScheme.primary
                             )
                         }
-                        // Delete Icon (only visible if showDeleteIcon is true)
+
                         if (showDeleteIcon) {
                             IconButton(
                                 onClick = { onDeleteClick(article) },
