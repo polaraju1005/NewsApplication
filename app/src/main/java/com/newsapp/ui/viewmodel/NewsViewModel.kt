@@ -1,5 +1,8 @@
 package com.newsapp.ui.viewmodel
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.newsapp.data.model.Article
@@ -15,14 +18,21 @@ class NewsViewModel @Inject constructor(private val repository: NewsRepository) 
     private val _articles = MutableStateFlow<List<Article>>(emptyList())
     val articles: StateFlow<List<Article>> = _articles
 
-    fun fetchNews(country: String, apiKey: String) {
+    var selectedLanguage by mutableStateOf("en")
+    var isLoading by mutableStateOf(false)
+
+    fun fetchNews(category: String, language: String, country: String, apiKey: String) {
         viewModelScope.launch {
+            isLoading = true
             try {
-                val response = repository.getTopHeadlines(country, apiKey)
+                val response = repository.getTopHeadlines(category, language, country, apiKey)
                 _articles.value = response.articles
             } catch (e: Exception) {
-                // Handle error (e.g., log it or notify the user)
+                // Handle error
+            } finally {
+                isLoading = false
             }
         }
     }
 }
+

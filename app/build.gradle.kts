@@ -100,4 +100,6 @@ dependencies {
     kapt("com.google.dagger:hilt-compiler:2.51.1")
 
     implementation("androidx.navigation:navigation-compose:2.7.1")
+
+    implementation ("com.google.accompanist:accompanist-placeholder-material:0.23.1")
 }
